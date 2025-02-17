@@ -1,5 +1,11 @@
+let isTTSActive = false;
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.action === "readText" && message.text) {
+    if (message.action === "toggleTTS") {
+        isTTSActive = message.state;
+        chrome.storage.local.set({ ttsEnabled: isTTSActive }); // Save state in storage
+        console.log(`Text-to-Speech is now ${isTTSActive ? "ON" : "OFF"}`);
+    } else if (message.action === "readText" && message.text && isTTSActive) {
         chrome.tts.speak(message.text, {
             rate: 1.0,
             pitch: 1.0,
@@ -10,5 +16,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 }
             }
         });
+    } else if (message.action === "stopReading") {
+        chrome.tts.stop();
+        console.log("Reading stopped.");
     }
 });
