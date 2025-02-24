@@ -5,6 +5,7 @@ import { initializeFontSwitcher } from "./fontSwitcher.js";
 import { initializeTextAdjuster } from "./textAdjuster.js";
 import { initializeColorOverlay } from "./colorOverlay.js";
 import { initializeLineFocus } from "./lineFocus.js";
+import { initializeSyllableSplitter } from "./syllableSplitter.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     initializeTodoList();
@@ -14,4 +15,5 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeTextAdjuster();
     initializeColorOverlay();
     initializeLineFocus();
+    initializeSyllableSplitter();
 });
