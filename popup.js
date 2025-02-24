@@ -4,6 +4,7 @@ import { initializeReadAloud } from "./readAloud.js";
 import { initializeFontSwitcher } from "./fontSwitcher.js";
 import { initializeTextAdjuster } from "./textAdjuster.js";
 import { initializeColorOverlay } from "./colorOverlay.js";
+import { initializeLineFocus } from "./lineFocus.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     initializeTodoList();
@@ -12,4 +13,5 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeFontSwitcher();
     initializeTextAdjuster();
     initializeColorOverlay();
+    initializeLineFocus();
 });
