@@ -1,3 +1,17 @@
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.contextMenus.create({
+        id: "dyslexiaOptions",
+        title: "Dyslexia Toolkit Options",
+        contexts: ["browser_action"]
+    });
+});
+
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+    if (info.menuItemId === "dyslexiaOptions") {
+        chrome.runtime.openOptionsPage();
+    }
+});
+
 let isTTSActive = false;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {

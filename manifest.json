@@ -6,7 +6,8 @@
     "action": {
       "default_popup": "popup.html"
     },
-    "permissions": ["storage", "tts", "activeTab", "scripting"],
+    "options_page": "options.html",
+    "permissions": ["storage", "tts", "activeTab", "scripting", "contextMenus"],
     "background": {
     "service_worker": "background.js"
     },

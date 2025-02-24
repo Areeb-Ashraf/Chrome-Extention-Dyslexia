@@ -6,6 +6,7 @@ import { initializeTextAdjuster } from "./textAdjuster.js";
 import { initializeColorOverlay } from "./colorOverlay.js";
 import { initializeLineFocus } from "./lineFocus.js";
 import { initializeSyllableSplitter } from "./syllableSplitter.js";
+import { initializeGeminiShortener } from "./geminiShortener.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     initializeTodoList();
@@ -16,4 +17,5 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeColorOverlay();
     initializeLineFocus();
     initializeSyllableSplitter();
+    initializeGeminiShortener();
 });
