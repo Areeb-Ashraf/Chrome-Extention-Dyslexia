@@ -3,6 +3,7 @@ import { initializePomodoro } from "./pomodoro.js";
 import { initializeReadAloud } from "./readAloud.js";
 import { initializeFontSwitcher } from "./fontSwitcher.js";
 import { initializeTextAdjuster } from "./textAdjuster.js";
+import { initializeColorOverlay } from "./colorOverlay.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     initializeTodoList();
@@ -10,4 +11,5 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeReadAloud();
     initializeFontSwitcher();
     initializeTextAdjuster();
+    initializeColorOverlay();
 });

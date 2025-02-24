@@ -21,7 +21,7 @@
     <h2>Read Aloud</h2>
     <button id="readAloudToggle">Toggle On Highlighted Text-to-Speech</button>
 
-    <<h2>Font Switcher</h2>
+    <h2>Font Switcher</h2>
     <div class="toggle-container">
       <input type="checkbox" id="fontSwitcherToggle" class="toggle-input">
       <label class="switch" for="fontSwitcherToggle">
@@ -62,6 +62,20 @@
     <option value="initial">Default</option>
   </select>
 </div>
+
+<h2>Color Overlay</h2>
+    <div class="toggle-container">
+        <input type="checkbox" id="overlayToggle" class="toggle-input">
+        <label class="switch" for="overlayToggle">
+            <span class="slider round"></span>
+        </label>
+        <span class="toggle-label">Enable Overlay</span>
+    </div>
+    <label for="overlayColor">Choose Color</label>
+    <input type="color" id="overlayColor" value="#ffffff">
+    <label for="overlayOpacity">Opacity</label>
+    <input type="range" id="overlayOpacity" min="0" max="1" step="0.1" value="0.2">
+    
 
     <script type="module" src="popup.js"></script>
 </body>
