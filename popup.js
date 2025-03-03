@@ -7,6 +7,8 @@ import { initializeColorOverlay } from "./colorOverlay.js";
 import { initializeLineFocus } from "./lineFocus.js";
 import { initializeSyllableSplitter } from "./syllableSplitter.js";
 import { initializeGeminiShortener } from "./geminiShortener.js";
+import { initializeTrackingAid } from "./trackingAid.js";
+import { initializeDistractionReducer } from "./distractionReducer.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     initializeTodoList();
@@ -18,4 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeLineFocus();
     initializeSyllableSplitter();
     initializeGeminiShortener();
+    initializeTrackingAid();
+    initializeDistractionReducer();
 });

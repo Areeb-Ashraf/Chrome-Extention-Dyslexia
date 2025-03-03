@@ -2,43 +2,61 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADHD Productivity Toolkit</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADHD Productivity Toolkit</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <h2>To-Do List</h2>
-    <input type="text" id="taskInput" placeholder="Add a task...">
-    <button id="addTask">Add</button>
-    <ul id="taskList"></ul>
+  <h2>To-Do List</h2>
+  <input type="text" id="taskInput" placeholder="Add a task...">
+  <button id="addTask">Add</button>
+  <ul id="taskList"></ul>
 
-    <h2>Pomodoro Timer</h2>
-    <div id="pomodoroTimer">25:00</div>
-    <button id="startPomodoro">Start Pomodoro</button>
+  <h2>Pomodoro Timer</h2>
+  <div id="pomodoroTimer">25:00</div>
+  <button id="startPomodoro">Start Pomodoro</button>
 
-    <h2>Read Aloud</h2>
-    <button id="readAloudToggle">Toggle On Highlighted Text-to-Speech</button>
+  <h2>Read Aloud</h2>
+  <button id="readAloudToggle">Toggle On Highlighted Text-to-Speech</button>
 
-    <h2>Font Switcher</h2>
-    <div class="toggle-container">
-      <input type="checkbox" id="fontSwitcherToggle" class="toggle-input">
-      <label class="switch" for="fontSwitcherToggle">
-        <span class="slider round"></span>
-      </label>
-      <span class="toggle-label">Enable Custom Font</span>
-    </div>
-    <select id="fontSelect">
-      <option value="OpenDyslexic">OpenDyslexic</option>
-      <option value="Arial">Arial</option>
-      <option value="Comic Sans MS">Comic Sans MS</option>
-      <option value="Times New Roman">Times New Roman</option>
-    </select>
-    
-    <hr>
-    
-    <h2>Text Adjustments</h2>
+  <h2>Font Switcher</h2>
+  <div class="toggle-container">
+    <input type="checkbox" id="fontSwitcherToggle" class="toggle-input">
+    <label class="switch" for="fontSwitcherToggle">
+      <span class="slider round"></span>
+    </label>
+    <span class="toggle-label">Enable Custom Font</span>
+  </div>
+  <select id="fontSelect">
+    <option value="OpenDyslexic">OpenDyslexic</option>
+    <option value="Arial">Arial</option>
+    <option value="Comic Sans MS">Comic Sans MS</option>
+    <option value="Times New Roman">Times New Roman</option>
+  </select>
+
+  <hr>
+
+  <h2>Distraction Reducer</h2>
+  <div class="toggle-container">
+    <input type="checkbox" id="distractionReducerToggle" class="toggle-input">
+    <label class="switch" for="distractionReducerToggle">
+      <span class="slider round"></span>
+    </label>
+    <span class="toggle-label">Enable Distraction Reduction</span>
+  </div>
+
+  <h2>Tracking Aid</h2>
+<div class="toggle-container">
+  <input type="checkbox" id="trackingAidToggle" class="toggle-input">
+  <label class="switch" for="trackingAidToggle">
+    <span class="slider round"></span>
+  </label>
+  <span class="toggle-label">Enable Tracking Aid</span>
+</div>
+
+  <h2>Text Adjustments</h2>
 <div class="toggle-container">
   <input type="checkbox" id="textAdjustmentsToggle" class="toggle-input">
   <label class="switch" for="textAdjustmentsToggle">
@@ -48,53 +66,60 @@
 </div>
 <div class="adjustments">
   <label for="fontSizeInput">Font Size (px):</label>
-  <input type="number" id="fontSizeInput" min="10" max="72" value="16">
+  <input type="text" id="fontSizeInput" placeholder="DEFAULT or number" value="16">
 
   <label for="letterSpacingInput">Letter Spacing (px):</label>
-  <input type="number" id="letterSpacingInput" min="0" max="10" step="0.5" value="0">
+  <input type="text" id="letterSpacingInput" placeholder="DEFAULT or number" value="0">
 
   <label for="lineHeightInput">Line Height:</label>
-  <input type="number" id="lineHeightInput" min="1" max="3" step="0.1" value="1.5">
+  <input type="text" id="lineHeightInput" placeholder="DEFAULT or number" value="1.5">
 
   <label for="textAlignSelect">Text Alignment:</label>
   <select id="textAlignSelect">
+    <option value="DEFAULT">DEFAULT</option>
     <option value="left">Left Align</option>
-    <option value="initial">Default</option>
+    <option value="center">Center</option>
+    <option value="right">Right Align</option>
+    <option value="justify">Justify</option>
+    <option value="initial">Initial</option>
   </select>
+  
+  <label for="maxLineWidthInput">Max Line Width (px):</label>
+  <input type="text" id="maxLineWidthInput" placeholder="DEFAULT or number" value="800">
 </div>
 
-<h2>Color Overlay</h2>
-    <div class="toggle-container">
-        <input type="checkbox" id="overlayToggle" class="toggle-input">
-        <label class="switch" for="overlayToggle">
-            <span class="slider round"></span>
-        </label>
-        <span class="toggle-label">Enable Overlay</span>
-    </div>
-    <label for="overlayColor">Choose Color</label>
-    <input type="color" id="overlayColor" value="#ffffff">
-    <label for="overlayOpacity">Opacity</label>
-    <input type="range" id="overlayOpacity" min="0" max="1" step="0.1" value="0.2">
+  <h2>Color Overlay</h2>
+  <div class="toggle-container">
+    <input type="checkbox" id="overlayToggle" class="toggle-input">
+    <label class="switch" for="overlayToggle">
+      <span class="slider round"></span>
+    </label>
+    <span class="toggle-label">Enable Overlay</span>
+  </div>
+  <label for="overlayColor">Choose Color</label>
+  <input type="color" id="overlayColor" value="#ffffff">
+  <label for="overlayOpacity">Opacity</label>
+  <input type="range" id="overlayOpacity" min="0" max="1" step="0.1" value="0.2">
 
-    <h2>Line Focus</h2>
-    <div class="toggle-container">
-        <input type="checkbox" id="lineFocusToggle" class="toggle-input">
-        <label class="switch" for="lineFocusToggle">
-            <span class="slider round"></span>
-        </label>
-        <span class="toggle-label">Enable Line Focus</span>
-    </div>
+  <h2>Line Focus</h2>
+  <div class="toggle-container">
+    <input type="checkbox" id="lineFocusToggle" class="toggle-input">
+    <label class="switch" for="lineFocusToggle">
+      <span class="slider round"></span>
+    </label>
+    <span class="toggle-label">Enable Line Focus</span>
+  </div>
 
-    <h2>Syllable Splitter</h2>
-    <button id="syllableButton">Split into Syllables</button>
+  <h2>Syllable Splitter</h2>
+  <button id="syllableButton">Split into Syllables</button>
 
-    <h2>Shorten with Gemini</h2>
-    <button id="geminiShortenButton">Shorten Text</button>
+  <h2>Shorten with Gemini</h2>
+  <button id="geminiShortenButton">Shorten Text</button>
 
-    <a href="options.html" target="_blank">Set you Gemini API key here</a>
-    
+  <a href="options.html" target="_blank">Set you Gemini API key here</a>
 
-    <script type="module" src="popup.js"></script>
+
+  <script type="module" src="popup.js"></script>
 </body>
 
 </html>

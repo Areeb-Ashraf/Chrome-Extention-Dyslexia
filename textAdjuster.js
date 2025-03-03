@@ -4,22 +4,25 @@ export function initializeTextAdjuster() {
     const letterSpacingInput = document.getElementById("letterSpacingInput");
     const lineHeightInput = document.getElementById("lineHeightInput");
     const textAlignSelect = document.getElementById("textAlignSelect");
+    const maxLineWidthInput = document.getElementById("maxLineWidthInput");
 
     // Load stored values or use defaults
     chrome.storage.local.get(
-        ["textAdjustmentsEnabled", "fontSize", "letterSpacing", "lineHeight", "textAlign"],
+        ["textAdjustmentsEnabled", "fontSize", "letterSpacing", "lineHeight", "textAlign", "maxLineWidth"],
         (result) => {
             const adjustmentsEnabled = result.textAdjustmentsEnabled !== undefined ? result.textAdjustmentsEnabled : false;
             const fontSize = result.fontSize || "16";
             const letterSpacing = result.letterSpacing || "0";
             const lineHeight = result.lineHeight || "1.5";
-            const textAlign = result.textAlign || "initial";
+            const textAlign = result.textAlign || "DEFAULT";
+            const maxLineWidth = result.maxLineWidth || "800";
 
             textAdjustmentsToggle.checked = adjustmentsEnabled;
             fontSizeInput.value = fontSize;
             letterSpacingInput.value = letterSpacing;
             lineHeightInput.value = lineHeight;
             textAlignSelect.value = textAlign;
+            maxLineWidthInput.value = maxLineWidth;
 
             // Apply adjustments if enabled
             if (adjustmentsEnabled) {
@@ -41,46 +44,63 @@ export function initializeTextAdjuster() {
 
     // Listen for changes in each control
     fontSizeInput.addEventListener("change", () => {
-        const fontSize = fontSizeInput.value;
-        chrome.storage.local.set({ fontSize });
+        chrome.storage.local.set({ fontSize: fontSizeInput.value });
         applyTextAdjustments();
     });
 
     letterSpacingInput.addEventListener("change", () => {
-        const letterSpacing = letterSpacingInput.value;
-        chrome.storage.local.set({ letterSpacing });
+        chrome.storage.local.set({ letterSpacing: letterSpacingInput.value });
         applyTextAdjustments();
     });
 
     lineHeightInput.addEventListener("change", () => {
-        const lineHeight = lineHeightInput.value;
-        chrome.storage.local.set({ lineHeight });
+        chrome.storage.local.set({ lineHeight: lineHeightInput.value });
         applyTextAdjustments();
     });
 
     textAlignSelect.addEventListener("change", () => {
-        const textAlign = textAlignSelect.value;
-        chrome.storage.local.set({ textAlign });
+        chrome.storage.local.set({ textAlign: textAlignSelect.value });
+        applyTextAdjustments();
+    });
+    
+    maxLineWidthInput.addEventListener("change", () => {
+        chrome.storage.local.set({ maxLineWidth: maxLineWidthInput.value });
         applyTextAdjustments();
     });
 
     // Function to construct and inject the CSS for text adjustments
     function applyTextAdjustments() {
         chrome.storage.local.get(
-            ["textAdjustmentsEnabled", "fontSize", "letterSpacing", "lineHeight", "textAlign"],
+            ["textAdjustmentsEnabled", "fontSize", "letterSpacing", "lineHeight", "textAlign", "maxLineWidth"],
             (result) => {
                 if (result.textAdjustmentsEnabled) {
                     const fontSize = result.fontSize || "16";
                     const letterSpacing = result.letterSpacing || "0";
                     const lineHeight = result.lineHeight || "1.5";
-                    const textAlign = result.textAlign || "initial";
+                    const textAlign = result.textAlign || "DEFAULT";
+                    const maxLineWidth = result.maxLineWidth || "800";
+
+                    let cssProperties = "";
+
+                    if (fontSize.toUpperCase() !== "DEFAULT" && fontSize.trim() !== "") {
+                        cssProperties += `font-size: ${fontSize}px !important;`;
+                    }
+                    if (letterSpacing.toUpperCase() !== "DEFAULT" && letterSpacing.trim() !== "") {
+                        cssProperties += `letter-spacing: ${letterSpacing}px !important;`;
+                    }
+                    if (lineHeight.toUpperCase() !== "DEFAULT" && lineHeight.trim() !== "") {
+                        cssProperties += `line-height: ${lineHeight} !important;`;
+                    }
+                    if (textAlign.toUpperCase() !== "DEFAULT" && textAlign.trim() !== "") {
+                        cssProperties += `text-align: ${textAlign} !important;`;
+                    }
+                    if (maxLineWidth.toUpperCase() !== "DEFAULT" && maxLineWidth.trim() !== "") {
+                        cssProperties += `max-width: ${maxLineWidth}px !important;`;
+                    }
 
                     const css = `
                         * {
-                            font-size: ${fontSize}px !important;
-                            letter-spacing: ${letterSpacing}px !important;
-                            line-height: ${lineHeight} !important;
-                            text-align: ${textAlign} !important;
+                            ${cssProperties}
                         }
                     `;
                     updateAdjustmentStyle(css);
