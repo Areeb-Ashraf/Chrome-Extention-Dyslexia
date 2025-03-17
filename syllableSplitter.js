@@ -24,7 +24,7 @@ export function initializeSyllableSplitter() {
 
                         if (selectedText) {
                             const words = selectedText.split(/\s+/); // Split by spaces
-                            const syllableWords = words.map(word => breakIntoSyllables(word).join("-"));
+                            const syllableWords = words.map(word => breakIntoSyllables(word).join("/"));
                             const syllableText = syllableWords.join(" ");
 
                             range.deleteContents();

@@ -73,6 +73,9 @@ export function initializeLineFocus() {
                             mouseover: handleMouseOver,
                             mouseout: handleMouseOut
                         };
+
+                        // Add the small yellow cursor indicator.
+                        addCursorIndicator();
                     }
 
                     function disableLineFocus() {
@@ -85,6 +88,42 @@ export function initializeLineFocus() {
                         highlightedElements.forEach(element => {
                             element.style.backgroundColor = '';
                         });
+                        // Remove the cursor indicator.
+                        removeCursorIndicator();
+                    }
+
+                    // Add a small yellow indicator that follows the mouse.
+                    function addCursorIndicator() {
+                        if (document.getElementById("lineFocusIndicator")) return;
+                        const indicator = document.createElement("div");
+                        indicator.id = "lineFocusIndicator";
+                        indicator.style.position = "fixed";
+                        indicator.style.width = "10px";
+                        indicator.style.height = "10px";
+                        indicator.style.borderRadius = "50%";
+                        indicator.style.backgroundColor = "yellow";
+                        indicator.style.border = "1px solid black";  // Added small black border
+                        indicator.style.pointerEvents = "none";
+                        indicator.style.zIndex = "1000000";
+                        document.body.appendChild(indicator);
+                        document.addEventListener("mousemove", updateIndicator);
+                    }
+
+                    function updateIndicator(e) {
+                        const indicator = document.getElementById("lineFocusIndicator");
+                        if (indicator) {
+                            // Slight offset so it doesn't obscure the cursor.
+                            indicator.style.left = (e.clientX + 10) + "px";
+                            indicator.style.top = (e.clientY + -10) + "px";
+                        }
+                    }
+
+                    function removeCursorIndicator() {
+                        const indicator = document.getElementById("lineFocusIndicator");
+                        if (indicator) {
+                            indicator.remove();
+                        }
+                        document.removeEventListener("mousemove", updateIndicator);
                     }
                 },
                 args: [isEnabled]

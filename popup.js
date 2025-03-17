@@ -11,7 +11,7 @@ import { initializeTrackingAid } from "./trackingAid.js";
 import { initializeDistractionReducer } from "./distractionReducer.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    initializeTodoList();
+    // initializeTodoList();
     initializePomodoro();
     initializeReadAloud();
     initializeFontSwitcher();
