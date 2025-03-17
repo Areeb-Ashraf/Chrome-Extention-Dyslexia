@@ -1,4 +1,3 @@
-import { initializeTodoList } from "./todo.js";
 import { initializePomodoro } from "./pomodoro.js";
 import { initializeReadAloud } from "./readAloud.js";
 import { initializeFontSwitcher } from "./fontSwitcher.js";
@@ -9,9 +8,10 @@ import { initializeSyllableSplitter } from "./syllableSplitter.js";
 import { initializeGeminiShortener } from "./geminiShortener.js";
 import { initializeTrackingAid } from "./trackingAid.js";
 import { initializeDistractionReducer } from "./distractionReducer.js";
+import { initializeDictionaryLookup } from "./dictionary.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // initializeTodoList();
+    // Removed to-do list initialization as per previous changes.
     initializePomodoro();
     initializeReadAloud();
     initializeFontSwitcher();
@@ -22,4 +22,5 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeGeminiShortener();
     initializeTrackingAid();
     initializeDistractionReducer();
+    initializeDictionaryLookup();
 });

@@ -1,84 +1,114 @@
 export function initializeTrackingAid() {
-    const trackingAidToggle = document.getElementById("trackingAidToggle");
-  
-    // Load stored preference for tracking aid
-    chrome.storage.local.get(["trackingAidEnabled"], (result) => {
-      const isEnabled = result.trackingAidEnabled || false;
-      trackingAidToggle.checked = isEnabled;
-      if (isEnabled) {
-        injectTrackingAid();
-      }
-    });
-  
-    // Listen for toggle changes
-    trackingAidToggle.addEventListener("change", () => {
-      const isEnabled = trackingAidToggle.checked;
-      chrome.storage.local.set({ trackingAidEnabled: isEnabled });
-      if (isEnabled) {
-        injectTrackingAid();
-      } else {
-        removeTrackingAid();
-      }
-    });
-  
-    // Inject the tracking aid element (a movable box) into the active tab
-    function injectTrackingAid() {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.scripting.executeScript({
-          target: { tabId: tabs[0].id },
-          function: () => {
-            if (document.getElementById("trackingAid")) return;
-            const box = document.createElement("div");
-            box.id = "trackingAid";
-            // Styling for the box
-            box.style.position = "absolute";
-            box.style.top = "100px";  // initial vertical position
-            box.style.left = "100px"; // initial horizontal position
-            box.style.width = "25px";
-            box.style.height = "25px";
-            box.style.backgroundColor = "rgba(0, 150, 255, 0.7)"; // semi-transparent blue
-            box.style.border = "2px solid #0096ff";
-            box.style.cursor = "move";
-            box.style.zIndex = "999999";
-            document.body.appendChild(box);
-  
-            let isDragging = false;
-            let offsetX = 0;
-            let offsetY = 0;
-  
-            box.addEventListener("mousedown", (e) => {
-              isDragging = true;
-              offsetX = e.clientX - box.getBoundingClientRect().left;
-              offsetY = e.clientY - box.getBoundingClientRect().top;
-              e.preventDefault();
-            });
-  
-            document.addEventListener("mousemove", (e) => {
-              if (!isDragging) return;
-              const newLeft = e.clientX - offsetX;
-              const newTop = e.clientY - offsetY;
-              box.style.left = newLeft + "px";
-              box.style.top = newTop + "px";
-            });
-  
-            document.addEventListener("mouseup", () => {
-              isDragging = false;
-            });
-          }
-        });
-      });
+  const trackingAidToggle = document.getElementById("trackingAidToggle");
+  const trackingAidColorInput = document.getElementById("trackingAidColor");
+
+  // Load stored preferences for tracking aid enabled state and color.
+  chrome.storage.local.get(["trackingAidEnabled", "trackingAidColor"], (result) => {
+    const isEnabled = result.trackingAidEnabled || false;
+    // Default color: a semi-transparent blue (you can adjust as desired)
+    const color = result.trackingAidColor || "#0096ff";
+    trackingAidToggle.checked = isEnabled;
+    trackingAidColorInput.value = color;
+
+    if (isEnabled) {
+      injectTrackingAid(color);
     }
-  
-    // Remove the tracking aid element from the active tab
-    function removeTrackingAid() {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.scripting.executeScript({
-          target: { tabId: tabs[0].id },
-          function: () => {
-            const box = document.getElementById("trackingAid");
-            if (box) box.remove();
-          }
-        });
-      });
+  });
+
+  // Listen for toggle changes.
+  trackingAidToggle.addEventListener("change", () => {
+    const isEnabled = trackingAidToggle.checked;
+    chrome.storage.local.set({ trackingAidEnabled: isEnabled });
+    if (isEnabled) {
+      const color = trackingAidColorInput.value;
+      injectTrackingAid(color);
+    } else {
+      removeTrackingAid();
     }
+  });
+
+  // Listen for color changes.
+  trackingAidColorInput.addEventListener("change", () => {
+    const color = trackingAidColorInput.value;
+    chrome.storage.local.set({ trackingAidColor: color });
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        function: (color) => {
+          const box = document.getElementById("trackingAid");
+          if (box) {
+            box.style.backgroundColor = color;
+            box.style.border = "1px solid #000";
+          }
+        },
+        args: [color]
+      });
+    });
+  });
+
+  // Function to inject the tracking aid element (a draggable vertical rectangle) into the active tab.
+  function injectTrackingAid(color) {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        function: (color) => {
+          if (document.getElementById("trackingAid")) return;
+          const box = document.createElement("div");
+          box.id = "trackingAid";
+          // Set dimensions for a vertical rectangle (10px by 30px).
+          const boxWidth = 8;
+          const boxHeight = 30;
+          box.style.position = "absolute";
+          // Center the box based on new dimensions.
+          box.style.top = ((window.innerHeight - boxHeight) / 2) + "px";
+          box.style.left = ((window.innerWidth - boxWidth) / 2) + "px";
+          box.style.width = boxWidth + "px";
+          box.style.height = boxHeight + "px";
+          box.style.backgroundColor = color;
+          box.style.border = "1px solid #000";
+          box.style.cursor = "move";
+          box.style.zIndex = "999999";
+          document.body.appendChild(box);
+
+          let isDragging = false;
+          let offsetX = 0;
+          let offsetY = 0;
+
+          box.addEventListener("mousedown", (e) => {
+            isDragging = true;
+            const rect = box.getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+            e.preventDefault();
+          });
+
+          document.addEventListener("mousemove", function moveHandler(e) {
+            if (!isDragging) return;
+            const newLeft = e.clientX - offsetX;
+            const newTop = e.clientY - offsetY;
+            box.style.left = newLeft + "px";
+            box.style.top = newTop + "px";
+          });
+
+          document.addEventListener("mouseup", () => {
+            isDragging = false;
+          });
+        },
+        args: [color]
+      });
+    });
   }
+
+  // Function to remove the tracking aid element from the active tab.
+  function removeTrackingAid() {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        function: () => {
+          const box = document.getElementById("trackingAid");
+          if (box) box.remove();
+        }
+      });
+    });
+  }
+}
