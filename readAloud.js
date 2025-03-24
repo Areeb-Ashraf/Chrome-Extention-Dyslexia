@@ -76,12 +76,6 @@ function attachSpeakerIcon() {
     indicator.style.fontSize = "16px"; // adjust size as needed
     indicator.style.pointerEvents = "none";
     indicator.style.zIndex = "1000000";
-    // Optionally, add some styling (e.g. background, padding, border radius) if desired.
-    // indicator.style.backgroundColor = "rgba(255,255,255,0.8)";
-    // indicator.style.border = "1px solid #000";
-    // indicator.style.borderRadius = "0%";
-    // indicator.style.width = "20px";
-    // indicator.style.height = "20px";
     indicator.style.textAlign = "center";
     indicator.style.lineHeight = "20px";
 
