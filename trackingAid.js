@@ -77,21 +77,27 @@ export function initializeTrackingAid() {
           box.addEventListener("mousedown", (e) => {
             isDragging = true;
             const rect = box.getBoundingClientRect();
-            offsetX = e.clientX - rect.left;
-            offsetY = e.clientY - rect.top;
+            // Use e.pageX and e.pageY minus the element’s page offset (client rect + scroll)
+            offsetX = e.pageX - (rect.left + window.scrollX);
+            offsetY = e.pageY - (rect.top + window.scrollY);
+            document.body.style.cursor = "none";
             e.preventDefault();
           });
-
+          
           document.addEventListener("mousemove", function moveHandler(e) {
             if (!isDragging) return;
-            const newLeft = e.clientX - offsetX;
-            const newTop = e.clientY - offsetY;
+            // Use e.pageX and e.pageY to set new position
+            const newLeft = e.pageX - offsetX;
+            const newTop = e.pageY - offsetY;
             box.style.left = newLeft + "px";
             box.style.top = newTop + "px";
           });
-
+          
           document.addEventListener("mouseup", () => {
-            isDragging = false;
+            if (isDragging) {
+              isDragging = false;
+              document.body.style.cursor = "";
+            }
           });
         },
         args: [color]

@@ -51,19 +51,23 @@ export function initializeDistractionReducer() {
           let offsetY = 0;
           bar.addEventListener("mousedown", (e) => {
             isDragging = true;
-            offsetY = e.clientY - bar.getBoundingClientRect().top;
+            const rect = bar.getBoundingClientRect();
+            // Adjust for page scroll
+            offsetY = e.pageY - (rect.top + window.scrollY);
             e.preventDefault();
           });
+          
           document.addEventListener("mousemove", (e) => {
             if (!isDragging) return;
-            let newTop = e.clientY - offsetY;
+            // Use pageY for new position
+            let newTop = e.pageY - offsetY;
             bar.style.top = newTop + "px";
             updateOverlays();
           });
+          
           document.addEventListener("mouseup", () => {
             isDragging = false;
           });
-
           // When the mouse enters the bar, create overlays.
           bar.addEventListener("mouseenter", createOverlays);
           // When it leaves, remove overlays.
