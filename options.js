@@ -1,18 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const apiKeyInput = document.getElementById('geminiApiKey');
-    const saveButton = document.getElementById('saveApiKey');
+    const openaiApiKeyInput = document.getElementById('openaiApiKey');
+    const saveButton = document.getElementById('saveApiKeys');
     const statusDiv = document.getElementById('status');
 
-    chrome.storage.sync.get('geminiApiKey', (data) => {
-        if (data.geminiApiKey) {
-            apiKeyInput.value = data.geminiApiKey;
+    // Load saved API key
+    chrome.storage.sync.get(['openaiApiKey'], (data) => {
+        if (data.openaiApiKey) {
+            openaiApiKeyInput.value = data.openaiApiKey;
         }
     });
 
+    // Save API key
     saveButton.addEventListener('click', () => {
-        const apiKey = apiKeyInput.value;
-        chrome.storage.sync.set({ geminiApiKey: apiKey }, () => {
-            statusDiv.textContent = 'API Key saved.';
+        const openaiApiKey = openaiApiKeyInput.value;
+        
+        chrome.storage.sync.set({ 
+            openaiApiKey: openaiApiKey
+        }, () => {
+            statusDiv.textContent = 'API Key saved successfully.';
             setTimeout(() => {
                 statusDiv.textContent = '';
             }, 2000);

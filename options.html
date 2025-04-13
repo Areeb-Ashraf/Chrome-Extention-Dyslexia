@@ -2,12 +2,53 @@
 <html>
 <head>
     <title>Dyslexia Toolkit Options</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .api-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3367d6;
+        }
+        .status {
+            margin-top: 10px;
+            color: green;
+        }
+    </style>
 </head>
 <body>
-    <h2>Gemini API Key</h2>
-    <input type="password" id="geminiApiKey" placeholder="Enter your Gemini API key">
-    <button id="saveApiKey">Save</button>
-    <div id="status"></div>
+    <h1>Dyslexia Toolkit Options</h1>
+    
+    <div class="api-section">
+        <h2>OpenAI API Key</h2>
+        <p>Enter your OpenAI API key to use the text simplification feature.</p>
+        <input type="password" id="openaiApiKey" placeholder="Enter your OpenAI API key">
+    </div>
+    
+    <button id="saveApiKeys">Save API Key</button>
+    <div id="status" class="status"></div>
+    
     <script src="options.js"></script>
 </body>
 </html>

@@ -5,7 +5,7 @@ import { initializeTextAdjuster } from "./textAdjuster.js";
 import { initializeColorOverlay } from "./colorOverlay.js";
 import { initializeLineFocus } from "./lineFocus.js";
 import { initializeSyllableSplitter } from "./syllableSplitter.js";
-import { initializeGeminiShortener } from "./geminiShortener.js";
+import { initializeTextSimplifier } from "./textSimplifier.js";
 import { initializeTrackingAid } from "./trackingAid.js";
 import { initializeDistractionReducer } from "./distractionReducer.js";
 import { initializeDictionaryLookup } from "./dictionary.js";
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeColorOverlay();
     initializeLineFocus();
     initializeSyllableSplitter();
-    initializeGeminiShortener();
+    initializeTextSimplifier();
     initializeTrackingAid();
     initializeDistractionReducer();
     initializeDictionaryLookup();
