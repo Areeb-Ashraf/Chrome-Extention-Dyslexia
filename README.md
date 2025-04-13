@@ -28,7 +28,7 @@ A comprehensive Chrome extension designed to enhance reading and productivity fo
 
 1. Clone this repository:
    ```bash
-   git clone [repository-url]
+   git clone https://github.com/Areeb-Ashraf/Chrome-Extention-Dyslexia.git
    ```
 
 2. Open Chrome and navigate to `chrome://extensions/`
@@ -61,14 +61,6 @@ The extension offers various customization options:
 - Reading speed adjustments
 - Focus mode configurations
 - Text simplification levels
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
