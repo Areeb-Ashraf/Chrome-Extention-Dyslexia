@@ -1,22 +1,40 @@
 export function initializeLineFocus() {
     const lineFocusToggle = document.getElementById("lineFocusToggle");
 
+    if (!lineFocusToggle) {
+        console.error("Line Focus button not found");
+        return;
+    }
+
     // Load stored preferences
     chrome.storage.local.get(["lineFocusEnabled"], (result) => {
         const isEnabled = result.lineFocusEnabled || false;
-        lineFocusToggle.checked = isEnabled;
-        updateLineFocusState(isEnabled); // Update state on page load
+        updateButtonState(isEnabled);
+        updateLineFocusState(isEnabled);
     });
 
-    // Listen for toggle changes
-    lineFocusToggle.addEventListener("change", () => {
-        const isEnabled = lineFocusToggle.checked;
-        chrome.storage.local.set({ lineFocusEnabled: isEnabled });
-        updateLineFocusState(isEnabled); // Update state on toggle change
+    // Listen for button click instead of toggle change
+    lineFocusToggle.addEventListener("click", () => {
+        chrome.storage.local.get(["lineFocusEnabled"], (result) => {
+            const currentState = result.lineFocusEnabled || false;
+            const newState = !currentState;
+
+            chrome.storage.local.set({ lineFocusEnabled: newState }, () => {
+                updateButtonState(newState);
+                updateLineFocusState(newState);
+            });
+        });
     });
+
+    function updateButtonState(isEnabled) {
+        lineFocusToggle.textContent = isEnabled ? "👁️ Line Focus On" : "👁️ Line Focus Off";
+        lineFocusToggle.classList.toggle("active", isEnabled); // Optional for visual style
+    }
 
     function updateLineFocusState(isEnabled) {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (!tabs[0]) return;
+
             chrome.scripting.executeScript({
                 target: { tabId: tabs[0].id },
                 function: (isEnabled) => {
@@ -27,7 +45,7 @@ export function initializeLineFocus() {
                     }
 
                     function enableLineFocus() {
-                        if (window.lineFocusListeners) return; // Prevent duplicate listeners
+                        if (window.lineFocusListeners) return;
 
                         let highlightedElement = null;
 
@@ -74,7 +92,6 @@ export function initializeLineFocus() {
                             mouseout: handleMouseOut
                         };
 
-                        // Add the small yellow cursor indicator.
                         addCursorIndicator();
                     }
 
@@ -84,15 +101,15 @@ export function initializeLineFocus() {
                             document.removeEventListener('mouseout', window.lineFocusListeners.mouseout);
                             delete window.lineFocusListeners;
                         }
+
                         const highlightedElements = document.querySelectorAll('[style*="background-color: rgba(255, 255, 0, 0.3)"]');
                         highlightedElements.forEach(element => {
                             element.style.backgroundColor = '';
                         });
-                        // Remove the cursor indicator.
+
                         removeCursorIndicator();
                     }
 
-                    // Add a small yellow indicator that follows the mouse.
                     function addCursorIndicator() {
                         if (document.getElementById("lineFocusIndicator")) return;
                         const indicator = document.createElement("div");
@@ -102,7 +119,7 @@ export function initializeLineFocus() {
                         indicator.style.height = "10px";
                         indicator.style.borderRadius = "50%";
                         indicator.style.backgroundColor = "yellow";
-                        indicator.style.border = "1px solid black";  // Added small black border
+                        indicator.style.border = "1px solid black";
                         indicator.style.pointerEvents = "none";
                         indicator.style.zIndex = "1000000";
                         document.body.appendChild(indicator);
@@ -112,9 +129,8 @@ export function initializeLineFocus() {
                     function updateIndicator(e) {
                         const indicator = document.getElementById("lineFocusIndicator");
                         if (indicator) {
-                            // Slight offset so it doesn't obscure the cursor.
                             indicator.style.left = (e.clientX + 10) + "px";
-                            indicator.style.top = (e.clientY + -10) + "px";
+                            indicator.style.top = (e.clientY - 10) + "px";
                         }
                     }
 

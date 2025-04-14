@@ -1,102 +1,71 @@
+let isSpeaking = false;
+let currentUtterance = null;
+
 export function initializeReadAloud() {
-    const readAloudButton = document.getElementById("readAloudToggle");
+  const playBtn = document.getElementById("readAloudToggle");
+  const voiceSelect = document.getElementById("ttsVoiceSelect");
+  const speedSlider = document.getElementById("speedSlider");
+  const speedValue = document.getElementById("speedValue");
 
-    // Retrieve stored TTS state and update UI on popup load
-    chrome.storage.local.get(["ttsEnabled"], (result) => {
-        const isTTSActive = result.ttsEnabled || false;
-        readAloudButton.textContent = isTTSActive ? "Toggle Off Highlighted Text-to-Speech" : "Toggle On Highlighted Text-to-Speech";
+  let voices = [];
+
+  function populateVoices() {
+    voices = speechSynthesis.getVoices();
+    voiceSelect.innerHTML = "";
+    voices.forEach((voice, index) => {
+      const option = document.createElement("option");
+      option.value = index;
+      option.textContent = `${voice.name} (${voice.lang})`;
+      voiceSelect.appendChild(option);
     });
+  }
 
-    readAloudButton.addEventListener("click", () => {
-        chrome.storage.local.get(["ttsEnabled"], (result) => {
-            const isTTSActive = !result.ttsEnabled;
-            chrome.runtime.sendMessage({ action: "toggleTTS", state: isTTSActive });
+  // Load voices initially and on change
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = populateVoices;
+  }
+  populateVoices();
 
-            // Update button text
-            readAloudButton.textContent = isTTSActive ? "Toggle Off Highlighted Text-to-Speech" : "Toggle On Highlighted Text-to-Speech";
+  speedSlider.addEventListener("input", () => {
+    speedValue.textContent = `${speedSlider.value}x`;
+  });
 
-            // Save new state
-            chrome.storage.local.set({ ttsEnabled: isTTSActive });
-
-            if (!isTTSActive) {
-                chrome.runtime.sendMessage({ action: "stopReading" });
-                // Remove the speaker icon when TTS is turned off.
-                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                    chrome.scripting.executeScript({
-                        target: { tabId: tabs[0].id },
-                        function: removeSpeakerIcon
-                    });
-                });
-            } else {
-                // Add the speaker icon when TTS is enabled.
-                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                    chrome.scripting.executeScript({
-                        target: { tabId: tabs[0].id },
-                        function: attachSpeakerIcon,
-                        args: [chrome.runtime.getURL("speaker.png")]
-                    });
-                });
-            }
-        });
-    });
+  playBtn.addEventListener("click", () => {
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+      isSpeaking = false;
+      playBtn.innerHTML = `<span style="display: inline-block; transform: translateX(2px);">▶</span>`;
+      return;
+    }
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.scripting.executeScript({
-            target: { tabId: tabs[0].id },
-            function: () => {
-                let previousText = "";
-                function checkSelection() {
-                    chrome.storage.local.get(["ttsEnabled"], (result) => {
-                        if (!result.ttsEnabled) return; // Do nothing if TTS is off
+      chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        func: () => window.getSelection().toString().trim()
+      }, (results) => {
+        const selectedText = results[0].result;
+        if (!selectedText) {
+          alert("Please highlight some text.");
+          return;
+        }
 
-                        const selectedText = window.getSelection().toString().trim();
-                        if (selectedText && selectedText !== previousText) {
-                            previousText = selectedText;
-                            chrome.runtime.sendMessage({ action: "readText", text: selectedText });
-                        } else if (!selectedText && previousText) {
-                            previousText = "";
-                            chrome.runtime.sendMessage({ action: "stopReading" });
-                        }
-                    });
-                }
-                document.addEventListener("selectionchange", checkSelection);
-            }
-        });
+        const selectedVoice = speechSynthesis.getVoices()[voiceSelect.value];
+        const speed = parseFloat(speedSlider.value);
+        const utterance = new SpeechSynthesisUtterance(selectedText);
+        utterance.voice = selectedVoice;
+        utterance.rate = speed;
+
+        playBtn.innerHTML = `⏸`;
+
+        speechSynthesis.speak(utterance);
+        isSpeaking = true;
+        currentUtterance = utterance;
+
+        utterance.onend = () => {
+          isSpeaking = false;
+          playBtn.innerHTML = `<span style="display: inline-block; transform: translateX(2px);">▶</span>`;
+        };
+      });
     });
-}
-
-// Function that injects a small speaker icon that follows the mouse cursor.
-function attachSpeakerIcon() {
-    if (document.getElementById("speakerIcon")) return;
-    const indicator = document.createElement("div");
-    indicator.id = "speakerIcon";
-    // Instead of an image, we use a Unicode speaker emoji.
-    indicator.textContent = "🔊";
-    indicator.style.position = "fixed";
-    indicator.style.fontSize = "16px"; // adjust size as needed
-    indicator.style.pointerEvents = "none";
-    indicator.style.zIndex = "1000000";
-    indicator.style.textAlign = "center";
-    indicator.style.lineHeight = "20px";
-
-    document.body.appendChild(indicator);
-
-    window.speakerIconMouseMove = function(e) {
-        // Offset the icon slightly so it doesn't obscure the pointer.
-        indicator.style.left = (e.clientX + 5) + "px";
-        indicator.style.top = (e.clientY + -10) + "px";
-    };
-    document.addEventListener("mousemove", window.speakerIconMouseMove);
-}
-
-// Function to remove the speaker icon and its associated mousemove listener.
-function removeSpeakerIcon() {
-    const img = document.getElementById("speakerIcon");
-    if (img) {
-        img.remove();
-    }
-    if (window.speakerIconMouseMove) {
-        document.removeEventListener("mousemove", window.speakerIconMouseMove);
-        delete window.speakerIconMouseMove;
-    }
+  });
 }

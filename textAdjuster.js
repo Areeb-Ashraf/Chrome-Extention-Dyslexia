@@ -1,139 +1,160 @@
 export function initializeTextAdjuster() {
-    const textAdjustmentsToggle = document.getElementById("textAdjustmentsToggle");
-    const fontSizeSelect = document.getElementById("fontSizeSelect");
-    const letterSpacingSelect = document.getElementById("letterSpacingSelect");
-    const lineHeightSelect = document.getElementById("lineHeightSelect");
-    const textAlignSelect = document.getElementById("textAlignSelect");
-    const maxLineWidthSelect = document.getElementById("maxLineWidthSelect");
-  
-    // Load stored values or use defaults.
-    chrome.storage.local.get(
-      ["textAdjustmentsEnabled", "fontSize", "letterSpacing", "lineHeight", "textAlign", "maxLineWidth"],
-      (result) => {
-        const adjustmentsEnabled = result.textAdjustmentsEnabled !== undefined ? result.textAdjustmentsEnabled : false;
-        const fontSize = result.fontSize || "DEFAULT";
-        const letterSpacing = result.letterSpacing || "DEFAULT";
-        const lineHeight = result.lineHeight || "DEFAULT";
-        const textAlign = result.textAlign || "DEFAULT";
-        const maxLineWidth = result.maxLineWidth || "DEFAULT";
-  
-        textAdjustmentsToggle.checked = adjustmentsEnabled;
-        fontSizeSelect.value = fontSize;
-        letterSpacingSelect.value = letterSpacing;
-        lineHeightSelect.value = lineHeight;
-        textAlignSelect.value = textAlign;
-        maxLineWidthSelect.value = maxLineWidth;
-  
-        if (adjustmentsEnabled) {
-          applyTextAdjustments();
+  const fontFamilySelect = document.getElementById("fontFamilySelect");
+  const fontSizeRange = document.getElementById("fontSizeRange");
+  const letterSpacingRange = document.getElementById("letterSpacingRange");
+  const wordSpacingRange = document.getElementById("wordSpacingRange");
+  const lineHeightRange = document.getElementById("lineHeightRange");
+  const previewBox = document.getElementById("previewBox");
+  const saveBtn = document.querySelector(".buttons button:last-child");
+  const resetBtn = document.querySelector(".buttons button:first-child");
+  const alignButtons = document.querySelectorAll(".align-btn");
+
+  let textAlign = "left";
+
+  // Safely parse values
+  const parseOr = (val, fallback) => {
+    const parsed = parseFloat(val);
+    return isNaN(parsed) ? fallback : parsed;
+  };
+
+  // Fallback defaults in case computed styles are missing
+  const computed = window.getComputedStyle(previewBox);
+  const initialStyles = {
+    fontFamily: matchFontOption(computed.fontFamily),
+    fontSize: parseOr(computed.fontSize, 16),
+    letterSpacing: parseOr(computed.letterSpacing, 1),
+    wordSpacing: parseOr(computed.wordSpacing, 1),
+    lineHeight: parseOr(computed.lineHeight, 10),
+    textAlign: computed.textAlign || "left"
+  };
+
+  // Initialize controls
+  fontFamilySelect.value = initialStyles.fontFamily;
+  fontSizeRange.value = initialStyles.fontSize;
+  letterSpacingRange.value = initialStyles.letterSpacing;
+  wordSpacingRange.value = initialStyles.wordSpacing;
+  lineHeightRange.value = initialStyles.lineHeight;
+  setAlignButton(initialStyles.textAlign);
+  updateLabels();
+  updatePreview();
+
+  // Event Listeners
+  fontFamilySelect.addEventListener("change", updatePreview);
+  fontSizeRange.addEventListener("input", () => { updateLabels(); updatePreview(); });
+  letterSpacingRange.addEventListener("input", () => { updateLabels(); updatePreview(); });
+  wordSpacingRange.addEventListener("input", () => { updateLabels(); updatePreview(); });
+  lineHeightRange.addEventListener("input", () => { updateLabels(); updatePreview(); });
+  alignButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      alignButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      textAlign = btn.getAttribute("data-align");
+      updatePreview();
+    });
+  });
+
+  saveBtn.addEventListener("click", () => {
+    const settings = getCurrentSettings();
+    chrome.storage.local.set(settings, () => {
+      applyTextAdjustments(settings);
+    });
+  });
+
+  resetBtn.addEventListener("click", () => {
+    chrome.storage.local.clear();
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        function: () => {
+          const style = document.getElementById("customTypography");
+          if (style) style.remove();
         }
-      }
-    );
-  
-    // Listen for toggle changes.
-    textAdjustmentsToggle.addEventListener("change", () => {
-      const adjustmentsEnabled = textAdjustmentsToggle.checked;
-      chrome.storage.local.set({ textAdjustmentsEnabled: adjustmentsEnabled });
-      if (adjustmentsEnabled) {
-        applyTextAdjustments();
-      } else {
-        removeAdjustmentStyle();
-      }
-    });
-  
-    // Listen for dropdown changes.
-    fontSizeSelect.addEventListener("change", () => {
-      chrome.storage.local.set({ fontSize: fontSizeSelect.value });
-      applyTextAdjustments();
-    });
-    letterSpacingSelect.addEventListener("change", () => {
-      chrome.storage.local.set({ letterSpacing: letterSpacingSelect.value });
-      applyTextAdjustments();
-    });
-    lineHeightSelect.addEventListener("change", () => {
-      chrome.storage.local.set({ lineHeight: lineHeightSelect.value });
-      applyTextAdjustments();
-    });
-    textAlignSelect.addEventListener("change", () => {
-      chrome.storage.local.set({ textAlign: textAlignSelect.value });
-      applyTextAdjustments();
-    });
-    maxLineWidthSelect.addEventListener("change", () => {
-      chrome.storage.local.set({ maxLineWidth: maxLineWidthSelect.value });
-      applyTextAdjustments();
-    });
-  
-    // Construct and inject the CSS based on the selected values.
-    function applyTextAdjustments() {
-      chrome.storage.local.get(
-        ["textAdjustmentsEnabled", "fontSize", "letterSpacing", "lineHeight", "textAlign", "maxLineWidth"],
-        (result) => {
-          if (result.textAdjustmentsEnabled) {
-            const fontSize = result.fontSize || "DEFAULT";
-            const letterSpacing = result.letterSpacing || "DEFAULT";
-            const lineHeight = result.lineHeight || "DEFAULT";
-            const textAlign = result.textAlign || "DEFAULT";
-            const maxLineWidth = result.maxLineWidth || "DEFAULT";
-  
-            let cssProperties = "";
-  
-            if (fontSize !== "DEFAULT" && fontSize.trim() !== "") {
-              cssProperties += `font-size: ${fontSize}px !important;`;
-            }
-            if (letterSpacing !== "DEFAULT" && letterSpacing.trim() !== "") {
-              cssProperties += `letter-spacing: ${letterSpacing}px !important;`;
-            }
-            if (lineHeight !== "DEFAULT" && lineHeight.trim() !== "") {
-              cssProperties += `line-height: ${lineHeight} !important;`;
-            }
-            // For text alignment, if DEFAULT then inherit.
-            if (textAlign === "DEFAULT" || textAlign.trim() === "") {
-              cssProperties += `text-align: inherit !important;`;
-            } else {
-              cssProperties += `text-align: ${textAlign} !important;`;
-            }
-            if (maxLineWidth !== "DEFAULT" && maxLineWidth.trim() !== "") {
-              cssProperties += `max-width: ${maxLineWidth}px !important;`;
-            }
-  
-            const css = `* { ${cssProperties} }`;
-            updateAdjustmentStyle(css);
-          }
-        }
-      );
-    }
-  
-    // Injects or updates a style element in the active tab.
-    function updateAdjustmentStyle(css) {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.scripting.executeScript({
-          target: { tabId: tabs[0].id },
-          function: (css) => {
-            let styleElement = document.getElementById("customTextAdjustments");
-            if (!styleElement) {
-              styleElement = document.createElement("style");
-              styleElement.id = "customTextAdjustments";
-              document.head.appendChild(styleElement);
-            }
-            styleElement.innerHTML = css;
-          },
-          args: [css]
-        });
       });
-    }
-  
-    // Removes the injected style element.
-    function removeAdjustmentStyle() {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.scripting.executeScript({
-          target: { tabId: tabs[0].id },
-          function: () => {
-            const styleElement = document.getElementById("customTextAdjustments");
-            if (styleElement) {
-              styleElement.remove();
-            }
-          }
-        });
-      });
-    }
+    });
+
+    // Reset inputs
+    fontFamilySelect.value = initialStyles.fontFamily;
+    fontSizeRange.value = initialStyles.fontSize;
+    letterSpacingRange.value = initialStyles.letterSpacing;
+    wordSpacingRange.value = initialStyles.wordSpacing;
+    lineHeightRange.value = initialStyles.lineHeight;
+    setAlignButton(initialStyles.textAlign);
+    textAlign = initialStyles.textAlign;
+
+    updateLabels();
+    updatePreview();
+  });
+
+  function updateLabels() {
+    document.getElementById("fontSizeLabel").textContent = fontSizeRange.value;
+    document.getElementById("letterSpacingLabel").textContent = letterSpacingRange.value;
+    document.getElementById("wordSpacingLabel").textContent = wordSpacingRange.value;
+    document.getElementById("lineHeightLabel").textContent = lineHeightRange.value;
   }
+
+  function setAlignButton(value) {
+    alignButtons.forEach(b => b.classList.remove("active"));
+    alignButtons.forEach(btn => {
+      if (btn.getAttribute("data-align") === value) {
+        btn.classList.add("active");
+      }
+    });
+  }
+
+  function updatePreview() {
+    const settings = getCurrentSettings();
+    previewBox.style.fontFamily = settings.selectedFont;
+    previewBox.style.fontSize = settings.fontSize + "px";
+    previewBox.style.letterSpacing = settings.letterSpacing + "px";
+    previewBox.style.wordSpacing = settings.wordSpacing + "px";
+    previewBox.style.lineHeight = settings.lineHeight + "px";
+    previewBox.style.textAlign = settings.textAlign;
+  }
+
+  function getCurrentSettings() {
+    return {
+      selectedFont: fontFamilySelect.value,
+      fontSize: fontSizeRange.value,
+      letterSpacing: letterSpacingRange.value,
+      wordSpacing: wordSpacingRange.value,
+      lineHeight: lineHeightRange.value,
+      textAlign: textAlign
+    };
+  }
+
+  function applyTextAdjustments(settings) {
+    const css = `
+      * {
+        font-family: '${settings.selectedFont}', sans-serif !important;
+        font-size: ${settings.fontSize}px !important;
+        letter-spacing: ${settings.letterSpacing}px !important;
+        word-spacing: ${settings.wordSpacing}px !important;
+        line-height: ${settings.lineHeight}px !important;
+        text-align: ${settings.textAlign} !important;
+      }
+    `;
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        function: (css) => {
+          let styleElement = document.getElementById("customTypography");
+          if (!styleElement) {
+            styleElement = document.createElement("style");
+            styleElement.id = "customTypography";
+            document.head.appendChild(styleElement);
+          }
+          styleElement.innerHTML = css;
+        },
+        args: [css]
+      });
+    });
+  }
+
+  function matchFontOption(fontFamily) {
+    const options = ["OpenDyslexic", "Arial", "Comic Sans MS", "Times New Roman"];
+    return options.find(opt => fontFamily.toLowerCase().includes(opt.toLowerCase())) || "OpenDyslexic";
+  }
+}
+
+export const initializeFontSwitcher = initializeTextAdjuster;

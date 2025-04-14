@@ -1,162 +1,305 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ADHD Productivity Toolkit</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dyslexia Assistant</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
-
 <body>
-  <!-- <h2>To-Do List</h2>
-  <input type="text" id="taskInput" placeholder="Add a task...">
-  <button id="addTask">Add</button>
-  <ul id="taskList"></ul> -->
 
-  <h2>Pomodoro Timer</h2>
-  <div id="pomodoroTimer">00:00</div>
-  <button id="startPomodoro">Start Timer</button>
-  <label for="pomodoroInput">Set Timer (minutes):</label>
-  <input type="number" id="pomodoroInput" min="1" max="60" value="25">
-
-  <h2>Dictionary Lookup</h2>
-  <button id="dictionaryLookupButton">Look Up Word</button>
-
-  <h2>Read Aloud</h2>
-  <button id="readAloudToggle">Toggle On Highlighted Text-to-Speech</button>
-
-  <h2>Font Switcher</h2>
-  <div class="toggle-container">
-    <input type="checkbox" id="fontSwitcherToggle" class="toggle-input">
-    <label class="switch" for="fontSwitcherToggle">
-      <span class="slider round"></span>
-    </label>
-    <span class="toggle-label">Enable Custom Font</span>
-  </div>
-  <select id="fontSelect">
-    <option value="OpenDyslexic">OpenDyslexic</option>
-    <option value="Arial">Arial</option>
-    <option value="Comic Sans MS">Comic Sans MS</option>
-    <option value="Times New Roman">Times New Roman</option>
-  </select>
-
-  <hr>
-
-  <h2>Distraction Reducer</h2>
-  <div class="toggle-container">
-    <input type="checkbox" id="distractionReducerToggle" class="toggle-input">
-    <label class="switch" for="distractionReducerToggle">
-      <span class="slider round"></span>
-    </label>
-    <span class="toggle-label">Enable Distraction Reduction</span>
+  <!-- Top Navigation Header -->
+  <div class="top-header">
+    <div class="header-left">
+      <span class="icon">♿</span>
+      <span class="title">Dyslexia Assistant</span>
+    </div>
   </div>
 
-  <h2>Tracking Aid</h2>
-  <div class="toggle-container">
-    <input type="checkbox" id="trackingAidToggle" class="toggle-input">
-    <label class="switch" for="trackingAidToggle">
-      <span class="slider round"></span>
-    </label>
-    <span class="toggle-label">Enable Tracking Aid</span>
-  </div>
-  <label for="trackingAidColor">Box Color:</label>
-  <input type="color" id="trackingAidColor" value="#0096ff">
-
-  <h2>Text Adjustments</h2>
-  <div class="toggle-container">
-    <input type="checkbox" id="textAdjustmentsToggle" class="toggle-input">
-    <label class="switch" for="textAdjustmentsToggle">
-      <span class="slider round"></span>
-    </label>
-    <span class="toggle-label">Enable Text Adjustments</span>
-  </div>
-  <div class="adjustments">
-    <label for="fontSizeSelect">Font Size (px):</label>
-    <select id="fontSizeSelect">
-      <option value="DEFAULT">DEFAULT</option>
-      <option value="12">12</option>
-      <option value="14">14</option>
-      <option value="16">16</option>
-      <option value="18">18</option>
-      <option value="20">20</option>
-      <option value="22">22</option>
-      <option value="24">24</option>
-    </select>
-
-    <label for="letterSpacingSelect">Letter Spacing (px):</label>
-    <select id="letterSpacingSelect">
-      <option value="DEFAULT">DEFAULT</option>
-      <option value="0">0</option>
-      <option value="0.5">0.5</option>
-      <option value="1">1</option>
-      <option value="1.5">1.5</option>
-      <option value="2">2</option>
-      <option value="2.5">2.5</option>
-      <option value="3">3</option>
-    </select>
-
-    <label for="lineHeightSelect">Line Height:</label>
-    <select id="lineHeightSelect">
-      <option value="DEFAULT">DEFAULT</option>
-      <option value="1.25">1.75</option>
-      <option value="1.5">2.0</option>
-      <option value="1.75">2.25</option>
-      <option value="2.0">2.5</option>
-    </select>
-
-    <label for="textAlignSelect">Text Alignment:</label>
-    <select id="textAlignSelect">
-      <option value="DEFAULT">DEFAULT</option>
-      <option value="left">Left</option>
-      <option value="center">Center</option>
-      <option value="right">Right</option>
-      <option value="justify">Justify</option>
-      <option value="initial">Initial</option>
-    </select>
-
-    <label for="maxLineWidthSelect">Max Line Width (px):</label>
-    <select id="maxLineWidthSelect">
-      <option value="DEFAULT">DEFAULT</option>
-      <option value="600">1000</option>
-      <option value="700">1500</option>
-      <option value="800">2000</option>
-      <option value="900">2500</option>
-      <option value="1000">3000</option>
-      <option value="1100">3500</option>
-      <option value="1200">4000</option>
-    </select>
+  <!-- Tab Navigation -->
+  <div class="tabs">
+    <div class="tab active" data-tab="typography">Typography</div>
+    <div class="tab" data-tab="reading">Reading Tools</div>
+    <div class="tab" data-tab="settings">Settings</div>
   </div>
 
-  <h2>Color Overlay</h2>
-  <div class="toggle-container">
-    <input type="checkbox" id="overlayToggle" class="toggle-input">
-    <label class="switch" for="overlayToggle">
-      <span class="slider round"></span>
-    </label>
-    <span class="toggle-label">Enable Overlay</span>
+  <!-- Sections -->
+  <div class="section active" id="typography">
+    <div class="content">
+      <label for="fontFamilySelect">Font Family</label>
+      <select id="fontFamilySelect">
+        <option value="OpenDyslexic">OpenDyslexic</option>
+        <option value="Arial">Arial</option>
+        <option value="Comic Sans MS">Comic Sans MS</option>
+        <option value="Times New Roman">Times New Roman</option>
+      </select>
+  
+      <br><br>
+      <label for="fontSizeRange">Font Size: <span id="fontSizeLabel">16</span>px</label>
+      <input type="range" class="slider" id="fontSizeRange" min="10" max="30" value="16">
+  
+      <br><br>
+      <label for="letterSpacingRange">Letter Spacing: <span id="letterSpacingLabel">1</span>px</label>
+      <input type="range" class="slider" id="letterSpacingRange" min="0" max="10" value="1">
+  
+      <br><br>
+      <label for="wordSpacingRange">Word Spacing: <span id="wordSpacingLabel">1</span>x</label>
+      <input type="range" class="slider" id="wordSpacingRange" min="1" max="5" value="1">
+  
+      <br><br>
+      <label for="lineHeightRange">Line Height: <span id="lineHeightLabel">10</span>px</label>
+      <input type="range" class="slider" id="lineHeightRange" min="10" max="50" value="10">
+  
+      <br><br>
+      <label>Text Alignment</label>
+      <div class="text-alignment">
+        <button class="align-btn active" data-align="left">&#x2630;</button>
+        <button class="align-btn" data-align="center">&#x2632;</button>
+        <button class="align-btn" data-align="right">&#x2634;</button>
+        <button class="align-btn" data-align="justify">&#x2636;</button>
+      </div>
+  
+      <br><br>
+      <label>Preview</label>
+      <div class="preview" id="previewBox">The Dyslexia Assistant Tool</div>
+    </div>
+  
+    <div class="buttons">
+      <button>Reset</button>
+      <button>Save Changes</button>
+    </div>
   </div>
-  <label for="overlayColor">Choose Color</label>
-  <input type="color" id="overlayColor" value="#ffffff">
-  <label for="overlayOpacity">Opacity</label>
-  <input type="range" id="overlayOpacity" min="0" max="1" step="0.1" value="0.2">
 
-  <h2>Line Focus</h2>
-  <div class="toggle-container">
-    <input type="checkbox" id="lineFocusToggle" class="toggle-input">
-    <label class="switch" for="lineFocusToggle">
-      <span class="slider round"></span>
-    </label>
-    <span class="toggle-label">Enable Line Focus</span>
+  <!-- Reading Tools Section -->
+<div class="section" id="reading">
+  <!-- Reading Tools Menu -->
+  <div id="readingMenu">
+    <div class="option-card" data-option="tts">
+      <span class="icon">🔊</span>
+      <div>
+        <h3>Text-to-Speech</h3>
+        <p>Convert text to audio with customizable voices</p>
+      </div>
+    </div>
+
+    <div class="option-card" data-option="masking">
+      <span class="icon">📑</span>
+      <div>
+        <h3>Text Masking</h3>
+        <p>Focus on specific text sections</p>
+      </div>
+    </div>
+
+    <div class="option-card" data-option="syllable">
+      <span class="icon">📖</span>
+      <div>
+        <h3>Syllable Breakdown</h3>
+        <p>Split words into readable segments</p>
+      </div>
+    </div>
+
+    <div class="option-card" data-option="Dictionary">
+      <span class="icon">🔍</span>
+      <div>
+        <h3>Word Lookup</h3>
+        <p>Look up word from Dictionary</p>
+      </div>
+    </div>
+    <div class="option-card" data-option="Color">
+      <div class="icon">
+        <svg class="overlay-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <!-- Screen outline -->
+          <rect x="6" y="8" width="36" height="26" rx="2" ry="2" fill="#ccc" stroke="#000" stroke-width="2"/>
+          
+          <!-- Color overlay (semi-transparent) -->
+          <rect x="6" y="8" width="36" height="26" rx="2" ry="2" fill="rgba(255, 0, 0, 0.3)"/>
+          
+          <!-- Monitor stand -->
+          <rect x="20" y="36" width="8" height="4" fill="#666"/>
+          <rect x="16" y="40" width="16" height="2" fill="#000"/>
+        </svg>
+    
+      </div>
+      <div>
+        <h3>Color Overlay</h3>
+        <p>Use any color to overlay the screen</p>
+      </div>
+    </div>
+    <div class="option-card" data-option="chatgpt">
+      <span class="icon"><img src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg" alt="ChatGPT Logo" width="24"></span>
+      <div>
+        <h3>ChatGPT Assistant</h3>
+        <p>Simplify with ChatGPT</p>
+      </div>
+    </div>
   </div>
 
-  <h2>Syllable Splitter</h2>
-  <button id="syllableButton">Split into Syllables</button>
+  <div class="reading-screen" id="tts">
+    <div class="card">
+      <div class="card-header">Text-to-Speech Controls</div>
+      <div class="controls">
+        <button class="skip" title="Previous">⏮</button>
+        <button class="play" id="readAloudToggle"><span style="display: inline-block; transform: translateX(2px);">▶</span></button>
+        <button class="skip" title="Next">⏭</button>
+      </div>
+  
+      <div class="slider-label">
+        <span>Reading Speed</span>
+        <span id="speedValue">1x</span>
+      </div>
+      <input type="range" min="0.5" max="2" step="0.1" value="1" class="slider" id="speedSlider">
+  
+      <div class="slider-label" style="margin-top: 1rem;">
+        <span>Voice</span>
+      </div>
+      <select id="ttsVoiceSelect" class="slider"></select>
+    </div>
+  </div>
+  
 
-  <h2>Shorten with Gemini</h2>
-  <button id="geminiShortenButton">Shorten Text</button>
 
-  <a href="options.html" target="_blank">Set you Gemini API key here</a>
+  <!-- Add more reading screens here if needed -->
+  <div class="reading-screen hidden" id="masking">
+    <div class="card">
+    <!-- <div class="masking-title">Text Masking Controls</div>
+    <div class="slid">
+          <label for="opacity">Masking Opacity</label>
+          <span>50%</span>
+        </div>
+        <input id="opacity" type="range" class="slider" value="50" />
+        <div class="slid">
+          <label for="lineHeight">Line Height</label>
+          <span>1.5x</span>
+        </div>
+        <input id="lineHeight" type="range" class="slider" value="1.5" min="1" max="2" step="0.1" /> -->
+        <div class="masking-title">Distraction Reducer</div>
+        <div class="slid">
+          <label for="blurLevel">Blur Level</label>
+          <span id="blurValue">5px</span>
+        </div>
+        <input id="blurLevel" type="range" class="slider" min="0" max="20" value="5" />
+        <div class="toggle">
+          <input type="checkbox" id="distractionReducerToggle" />
+          <label for="distractionReducerToggle"> Enable Distraction Reducer</label>
+        </div>
+        <div class="masking-title">Tracking</div>
+        <div class="slid">
+          <label for="trackingAidColor">Tracking Color</label>
+        </div>
+        <input type="color" id="trackingAidColor" value="#ff0000" class="slider" />
+        <div class="toggle">
+          <input type="checkbox" id="trackingAidToggle" />
+          <label for="trackingAidToggle"> Enable Tracking</label>
+        </div>
+        <div class="buttons">
+          <button class="button" id="lineFocusToggle">👁️ Focus Line</button>
+          <button class="button" id="lineGuideBtn">📏 Line Guide</button>
+        </div>
+      </div>
+    </div>
+    <div class="reading-screen hidden" id="syllable">
+      <div class="card">
+        <div class="card-header">Syllable Breakdown</div>
+    
+        <input type="text" class="input" placeholder="Enter or Select Sentence" />
+        <button class="lookUp" id="syllableButton">Break Into Syllable</button>
+    
+        <div id="result" class="definition-box" style="display: none;"></div>
+      </div>
+    </div>
+    
+
+  <div class="reading-screen hidden" id="Dictionary">
+    <div class="card">
+    <div class="card-header">Dictionary Lookup</div>
+
+    <input type="text" id="wordInput" class="input" placeholder="Enter a word..." />
+    <button class="lookUp" id="dictionaryLookupButton">Lookup</button>
+
+    <div id="result1" class="definition-box" style="display: none;">
+      <p><strong>Definition:</strong></p>
+      <div id="definitionList" style="display: inline-block; margin-right: 20px;"></div>
+      <p><strong>Part of Speech:</strong> <span id="partOfSpeechText" style="display: inline-block;"></span></p>
+      <p id="audioSection" style="display: none;"><strong>Pronunciation:</strong> <button class="audio-btn" id="playAudio">🔊 Play</button></p>
+    </div>
+  </div>
+  </div>
+
+
+  <div class="reading-screen hidden" id="Color">
+  <div class="card">
+    <div class="card-header">Text Overlay</div>
+
+    <label>Overlay Color</label>
+    <input
+      type="color"
+      id="overlayColor"
+      value="#e74c3c"
+      style="width: 100%; height: 40px; border: 1px solid #ccc; border-radius: 5px;"
+    />
+
+    <div style="margin-top: 1rem;">
+      <label>
+        <input type="checkbox" id="overlayToggle" />
+        Enable Text Overlay (covers the screen with the selected color)
+      </label>
+
+      <div class="slider-label" style="margin-top: 10px;">
+        <label for="overlayOpacitySlider">Opacity</label>
+        <span id="overlayOpacityValue">0.5</span>
+      </div>
+
+      <input
+        class="slider"
+        type="range"
+        id="overlayOpacitySlider"
+        min="0"
+        max="1"
+        step="0.1"
+        value="0.2"
+      />
+    </div>
+  </div>
+  </div>
+  <div class="reading-screen hidden" id="chatgpt">
+    <div class="card">
+      <div class="card-header">ChatGPT Assistant</div>
+          
+        <input type="text" id="chatInput" class="input" placeholder="Enter or Select Sentence" />
+        <button class="lookUp" id="geminiShortenButton">Simplify Using ChatGPT</button>
+    
+        <div id="result22" class="definition-box" style="display: none;"></div>
+      </div>
+</div>
+</div>
+
+    
+<!-- Settings Tab Section -->
+<div class="section" id="settings">
+  <!-- Settings Menu -->
+  <div class="settingMenu">
+    <div class="option-card" data-option="chatgptSettings">
+      <span class="icon">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg" width="24">
+      </span>
+      <div>
+        <h3>ChatGPT Settings</h3>
+        <p>Enter ChatGPT API Key</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ChatGPT Settings Screen -->
+  <div class="setting-screen hidden" id="chatgptSettings">
+    <div class="card">
+      <div class="card-header">ChatGPT Settings</div>
+      <a href="options.html" target="_blank">Set your OpenAI API key here</a>
+    </div>
+  </div>
+</div>
+
+  <!-- ✅ External-safe JS -->
+  <script src="nav.js"></script>
 
 
   <script type="module" src="popup.js"></script>
