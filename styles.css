@@ -163,7 +163,7 @@ p {
 
 /* Hidden content */
 .content {
-  padding: 15px;
+  padding: 0px 15px 0px 15px;
   background: white;
   border-radius: 5px;
   margin-bottom: 10px;
